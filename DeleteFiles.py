@@ -39,4 +39,4 @@ def deleteFiles(fileType):
             print(filename)
             send2trash.send2trash(filename)
 
-#deleteFiles('.rtf')
+deleteFiles('.pdf')

@@ -33,20 +33,27 @@ def chapters():
 		if chapElem == []:
 			print("Could not find chapter.")
 		else:
+			# Get the file name
+			chapterName = os.path.basename(url)
+			# Insert newlines
 			chapter = '\n\n'.join(p.text for p in chapElem.findAll("p"))
 			# Name the page a prepare it for writinf to.
-			file = open(os.path.join("Spirit Realm", os.path.basename(url+".txt")), 'w')
+			file = open(os.path.join("Spirit Realm", chapterName+".txt"), 'w')
 			#change file to utf-8 with bom
 			file.write('\ufeff') 
-			 #write actual content to the file
+			 #write the actual content to the file
 			file.write(chapter)
 			file.close()
+
+			# uses the absolute path to specify the source text
+			pdfkit.from_file("/users/morgan/desktop/Spirit Realm/"+chapterName+".txt", chapterName+'.pdf')
 
 		# Grab next page link.
 		nextLink = chapElem.find("a", string="\nNext Chapter\n")
 		url = "https://www.wuxiaworld.com" + nextLink.get('href')
 		index += 1
 
+chapters()
 
 def convertToPdf():
 	for filename in os.listdir("/users/morgan/desktop/Spirit Realm"):

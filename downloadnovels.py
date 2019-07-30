@@ -5,33 +5,56 @@
 
 # This program is meant to download the novels from wuxiaworld.com
 
-import requests, os, bs4, pdfkit
+import requests, sys, os, bs4, pdfkit
 
 os.chdir("/Users/morgan/Desktop")
 # Ensure folder exist if not create it
 os.makedirs("Spirit Realm", exist_ok=True)
+os.makedirs("/Users/morgan/Desktop/Spirit Realm/PDF", exist_ok=True)
+
+# Convert files in path folder
+def convertToPdf(path):
+	for filename in os.listdir(path):
+		if filename.endswith(".txt"):
+			print(os.path.splitext(filename)[0])
+			pdfkit.from_file(path+filename, path+"/PDF/"+os.path.splitext(filename)[0]+'.pdf')
 
 def chapters():
 	# Starting url
 	url = "https://www.wuxiaworld.com/novel/spirit-realm/sr-chapter-1"
 
-	#Download the page.
+	# Check to see if there is a stated amount of files to download
+	if len(sys.argv) > 1:
+		desired = ' '.join(sys.argv[1:])
+	else:
+		desired = 10
+
 	index = 1
-	while not index == 1533:
+	while not index == int(desired):
 		# Download page
 		print("Downloading page %s. . . " % url)
 		res = requests.get(url)
-		res.raise_for_status()
+		
+		try:
+			res.raise_for_status()
+		except:
+			print("No chapter found!")
 
 		# Convert page request to BeautifulSoup object
 		soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
 		# Grab the chapter content
 		chapElem = soup.find("div", {"class": "fr-view"})
+		removeTeaser = chapElem.find("p", {"style": "text-align: center"})
+		
+		try:
+			removeTeaser.clear()
+		except:
+			print("No tag to remove!")
 
 		# Throw error if no chapter
 		if chapElem == []:
-			print("Could not find chapter.")
+			print("Could not find chapter content!")
 		else:
 			# Get the file name
 			chapterName = os.path.basename(url)
@@ -44,21 +67,15 @@ def chapters():
 			 #write the actual content to the file
 			file.write(chapter)
 			file.close()
-
-			# uses the absolute path to specify the source text
-			pdfkit.from_file("/users/morgan/desktop/Spirit Realm/"+chapterName+".txt", chapterName+'.pdf')
-
+		
 		# Grab next page link.
 		nextLink = chapElem.find("a", string="\nNext Chapter\n")
 		url = "https://www.wuxiaworld.com" + nextLink.get('href')
 		index += 1
 
-chapters()
+	path = "/users/morgan/desktop/Spirit Realm/"
+	convertToPdf(path)
 
-def convertToPdf():
-	for filename in os.listdir("/users/morgan/desktop/Spirit Realm"):
-		if filename.endswith('.txt'):
-			with open(os.path.join("/users/morgan/desktop/Spirit Realm", filename), 'r') as f:
-				pdfkit.from_file(f, str(filename)+'.pdf')
+chapters()
 
 

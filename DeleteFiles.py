@@ -40,3 +40,4 @@ def deleteFiles(fileType):
             send2trash.send2trash(filename)
 
 deleteFiles('.pdf')
+deleteFiles('.txt')

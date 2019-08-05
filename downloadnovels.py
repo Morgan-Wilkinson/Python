@@ -7,17 +7,23 @@
 
 import requests, sys, os, bs4, pdfkit
 
-os.chdir("/Users/morgan/Desktop")
+# Make Desktop current directory 
+os.chdir("/Users/morgan/Desktop/")
 # Ensure folder exist if not create it
-os.makedirs("Spirit Realm", exist_ok=True)
-os.makedirs("/Users/morgan/Desktop/Spirit Realm/PDF", exist_ok=True)
+filePath = "/Users/morgan/Desktop/Spirit Realm/"
+pdfPath = filePath+"PDF/"
+
+os.makedirs(filePath, exist_ok=True)
+os.makedirs(pdfPath, exist_ok=True)
+
 
 # Convert files in path folder
-def convertToPdf(path):
-	for filename in os.listdir(path):
+def convertToPdf(filePath, pdfPath):
+	os.chdir(filePath)
+	for filename in os.listdir():
 		if filename.endswith(".txt"):
-			print(os.path.splitext(filename)[0])
-			pdfkit.from_file(path+filename, path+"/PDF/"+os.path.splitext(filename)[0]+'.pdf')
+			output = (os.path.splitext(filename)[0])
+			pdfkit.from_file(filePath+filename, pdfPath+output+".pdf")
 
 def chapters():
 	# Starting url
@@ -44,13 +50,14 @@ def chapters():
 		soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
 		# Grab the chapter content
-		chapElem = soup.find("div", {"class": "fr-view"})
-		removeTeaser = chapElem.find("p", {"style": "text-align: center"})
-		
+		chapElem = soup.find("div", class_="p-15")
+
+		# Remove unwanted teaser.
 		try:
-			removeTeaser.clear()
+			remove = chapElem.find("p", {"style": "text-align: center"})
+			remove.clear()
 		except:
-			print("No tag to remove!")
+			print("No teaser found!")
 
 		# Throw error if no chapter
 		if chapElem == []:
@@ -60,22 +67,23 @@ def chapters():
 			chapterName = os.path.basename(url)
 			# Insert newlines
 			chapter = '\n\n'.join(p.text for p in chapElem.findAll("p"))
-			# Name the page a prepare it for writinf to.
+			# Name the page a prepare it for writing to.
 			file = open(os.path.join("Spirit Realm", chapterName+".txt"), 'w')
 			#change file to utf-8 with bom
 			file.write('\ufeff') 
 			 #write the actual content to the file
 			file.write(chapter)
 			file.close()
-		
+
 		# Grab next page link.
 		nextLink = chapElem.find("a", string="\nNext Chapter\n")
 		url = "https://www.wuxiaworld.com" + nextLink.get('href')
+
 		index += 1
 
-	path = "/users/morgan/desktop/Spirit Realm/"
-	convertToPdf(path)
+	convertToPdf(filePath, pdfPath)
 
 chapters()
+
 
 

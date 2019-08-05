@@ -32,7 +32,7 @@ while not url.endswith('#'):
 			print('Downloading image %s...' % (comicUrl))
 			res = requests.get(comicUrl)
 			res.raise_for_status()
-
+ç
 		except requests.exceptions.MissingSchema:
 			# Skip this comic
 			prevLink = soup.select('a[rel="prev"]')[0]

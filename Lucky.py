@@ -7,7 +7,7 @@
 # command line and then preforms a google search and open the top search results in another tab
 
 import sys, webbrowser, requests, bs4
-
+print(sys.version)
 # Prints googling while searching
 print("Googling...")
 

@@ -48,6 +48,7 @@ def pdfMerge(pdfPath):
 	index = 1
 	# For each file in the pdfFiles list open it and create a pdfFileReader object.
 	for filename in pdfFiles:
+		print("Adding %s to the master PDF file!" % filename)
 		pdfFileObj = open(filename, 'rb')
 		pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
 
@@ -73,6 +74,7 @@ def convertToPdf(filePath, pdfPath):
 	os.chdir(filePath)
 	for filename in os.listdir():
 		if filename.endswith(".txt"):
+			print("Converting file %s to PDF format!" % filename)
 			output = (os.path.splitext(filename)[0])
 			pdfkit.from_file(filePath+filename, pdfPath+output+".pdf")
 

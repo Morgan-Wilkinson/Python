@@ -5,7 +5,13 @@
 
 # This program is meant to download the novels from wuxiaworld.com
 
-import bs4, os, pdfkit, PyPDF2, requests, send2trash, sys 
+import bs4
+import os
+import pdfkit
+import PyPDF2
+import requests
+import send2trash 
+import sys
 
 # Make Desktop current directory 
 os.chdir("/Users/morgan/Desktop/")
